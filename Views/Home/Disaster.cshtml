@@ -1,0 +1,103 @@
+﻿@model IEnumerable<Gift_of_the_givers.Models.Disaster>
+
+@{
+    ViewData["Title"] = "Disaster Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-exclamation-triangle"></i> Disaster Management</h2>
+    <a href="/Disaster/Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Report New Disaster
+    </a>
+</div>
+
+<partial name="_NotificationPartial" />
+
+<!-- Search and Filter -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="location" class="form-control" placeholder="Search by location..." value="@Context.Request.Query["location"]">
+            </div>
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="Earthquake">Earthquake</option>
+                    <option value="Flood">Flood</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Storm">Storm</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Disasters Grid -->
+<div class="row">
+    @foreach (var disaster in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@disaster.Title</h5>
+                    <span class="badge bg-@(disaster.Status == "Active" ? "danger" : disaster.Status == "Resolved" ? "success" : "secondary")">
+                        @disaster.Status
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>Type:</strong> @disaster.DisasterType
+                    </div>
+                    <div class="mb-2">
+                        <strong>Location:</strong> @disaster.Location
+                    </div>
+                    <div class="mb-2">
+                        <strong>Severity:</strong>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-@(disaster.Severity >= 4 ? "danger" : disaster.Severity >= 3 ? "warning" : "info")"
+                                 style="width: @(disaster.Severity * 20)%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Description:</strong>
+                        <p class="mt-1">@disaster.Description</p>
+                    </div>
+                    <div class="text-muted small">
+                        Reported: @disaster.CreatedDate.ToString("MMM dd, yyyy hh:mm tt")
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/Disaster/Details/@disaster.DisasterID" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-eye"></i> View Details
+                    </a>
+                    <a href="/Disaster/Edit/@disaster.DisasterID" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="fas fa-exclamation-circle fa-3x text-muted mb-3"></i>
+        <h4>No disasters found</h4>
+        <p class="text-muted">No disaster reports match your search criteria.</p>
+        <a href="/Disaster/Create" class="btn btn-primary">Report First Disaster</a>
+    </div>
+}

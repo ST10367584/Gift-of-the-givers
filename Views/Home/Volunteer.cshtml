@@ -1,0 +1,130 @@
+﻿@model IEnumerable<Gift_of_the_givers.Models.Volunteer>
+
+@{
+    ViewData["Title"] = "Volunteer Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-users"></i> Volunteer Management</h2>
+    <div>
+        <a href="/Volunteer/Register" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Register Volunteer
+        </a>
+        <a href="/Volunteer/Assign" class="btn btn-success">
+            <i class="fas fa-tasks"></i> Assign Task
+        </a>
+    </div>
+</div>
+
+<partial name="_NotificationPartial" />
+
+<!-- Volunteer Statistics -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+            <h4>@ViewBag.TotalVolunteers</h4>
+            <small class="text-muted">Total Volunteers</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+            <h4>@ViewBag.ApprovedVolunteers</h4>
+            <small class="text-muted">Approved</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+            <h4>@ViewBag.PendingVolunteers</h4>
+            <small class="text-muted">Pending Approval</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card text-center">
+            <i class="fas fa-tasks fa-2x text-info mb-2"></i>
+            <h4>@ViewBag.ActiveAssignments</h4>
+            <small class="text-muted">Active Assignments</small>
+        </div>
+    </div>
+</div>
+
+<!-- Volunteers Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Volunteer</th>
+                        <th>Contact</th>
+                        <th>Skills</th>
+                        <th>Availability</th>
+                        <th>Status</th>
+                        <th>Registration Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var volunteer in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@volunteer.User.FullName</strong>
+                                <br><small class="text-muted">@volunteer.User.Email</small>
+                            </td>
+                            <td>@volunteer.Phone</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(volunteer.Skills))
+                                {
+                                    var skills = volunteer.Skills.Split(',');
+                                    foreach (var skill in skills.Take(2))
+                                    {
+                                        <span class="badge bg-secondary me-1">@skill.Trim()</span>
+                                    }
+                                    @if (skills.Length > 2)
+                                    {
+                                        <span class="badge bg-light text-dark">+@(skills.Length - 2) more</span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-@(volunteer.Availability == "Full-time" ? "success" : volunteer.Availability == "Part-time" ? "warning" : "info")">
+                                    @volunteer.Availability
+                                </span>
+                            </td>
+                            <td>
+                                @if (volunteer.IsApproved)
+                                {
+                                    <span class="badge bg-success">Approved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">Pending</span>
+                                }
+                            </td>
+                            <td>@volunteer.RegistrationDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="/Volunteer/Details/@volunteer.VolunteerID" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (!volunteer.IsApproved)
+                                    {
+                                        <a href="/Volunteer/Approve/@volunteer.VolunteerID" class="btn btn-outline-success">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    }
+                                    <a href="/Volunteer/AssignTo/@volunteer.VolunteerID" class="btn btn-outline-info">
+                                        <i class="fas fa-tasks"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

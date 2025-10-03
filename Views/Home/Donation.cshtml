@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Gift_of_the_givers.Models.Donation>
+
+@{
+    ViewData["Title"] = "Donations";
+}
+
+<h2>Donations</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Make Donation</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Donor</th>
+            <th>Type</th>
+            <th>Amount/Quantity</th>
+            <th>Disaster</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DonorName</td>
+                <td>@item.ResourceType</td>
+                <td>
+                    @if (item.Amount.HasValue)
+                    {
+                        @item.Amount.Value.ToString("C")
+                    }
+                    else if (item.Quantity.HasValue)
+                    {
+                        @item.Quantity.Value
+                    }
+                </td>
+                <td>@item.Disaster?.Title</td>
+                <td>@item.Status</td>
+                <td>@item.DonationDate.ToString("MMM dd, yyyy")</td>
+            </tr>
+        }
+    </tbody>
+</table>

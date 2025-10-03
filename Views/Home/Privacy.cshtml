@@ -1,0 +1,155 @@
+﻿@model IEnumerable<Gift_of_the_givers.Models.ResourceAllocation>
+
+@{
+    ViewData["Title"] = "Resource Allocation";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-boxes"></i> Resource Allocation</h2>
+    <div>
+        <a href="/ResourceAllocation/Allocate" class="btn btn-primary me-2">
+            <i class="fas fa-plus"></i> Allocate Resources
+        </a>
+        <a href="/ResourceAllocation/Requests" class="btn btn-outline-primary">
+            <i class="fas fa-list"></i> View Requests
+        </a>
+    </div>
+</div>
+
+<partial name="_NotificationPartial" />
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <select name="disasterId" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Disasters</option>
+                    @foreach (var disaster in ViewBag.Disasters)
+                    {
+                        <option value="@disaster.DisasterID" selected="@(Context.Request.Query["disasterId"] == disaster.DisasterID.ToString())">
+                            @disaster.Title
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="resourceType" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Resource Types</option>
+                    <option value="Food">Food</option>
+                    <option value="Water">Water</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Shelter">Shelter</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Allocated">Allocated</option>
+                    <option value="Distributed">Distributed</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <a href="/ResourceAllocation" class="btn btn-outline-secondary w-100">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Resources Grid -->
+<div class="row">
+    @foreach (var allocation in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">@allocation.ItemName</h5>
+                    <span class="badge bg-@(allocation.Status == "Available" ? "success" : allocation.Status == "Allocated" ? "warning" : "info")">
+                        @allocation.Status
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>Disaster:</strong> @allocation.Disaster?.Title
+                    </div>
+                    <div class="mb-2">
+                        <strong>Type:</strong>
+                        <span class="badge bg-primary">@allocation.ResourceType</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Quantity:</strong> @allocation.Quantity @allocation.Unit
+                    </div>
+                    <div class="mb-3">
+                        <strong>Allocated:</strong>
+                        <small class="text-muted">@allocation.AllocationDate.ToString("MMM dd, yyyy")</small>
+                    </div>
+                    @if (!string.IsNullOrEmpty(allocation.Notes))
+                    {
+                        <div class="mb-3">
+                            <strong>Notes:</strong>
+                            <p class="mt-1 small">@allocation.Notes</p>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group btn-group-sm w-100">
+                        <button class="btn btn-outline-success status-btn" data-id="@allocation.AllocationID" data-status="Available">
+                            Available
+                        </button>
+                        <button class="btn btn-outline-warning status-btn" data-id="@allocation.AllocationID" data-status="Allocated">
+                            Allocated
+                        </button>
+                        <button class="btn btn-outline-info status-btn" data-id="@allocation.AllocationID" data-status="Distributed">
+                            Distributed
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+        <h4>No resources allocated</h4>
+        <p class="text-muted">No resource allocations match your search criteria.</p>
+        <a href="/ResourceAllocation/Allocate" class="btn btn-primary">Allocate First Resources</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Status update buttons
+            document.querySelectorAll('.status-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const allocationId = this.getAttribute('data-id');
+                    const status = this.getAttribute('data-status');
+
+                    fetch('/ResourceAllocation/UpdateStatus', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            allocationId: allocationId,
+                            status: status
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload(); // Reload to show updated status
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        });
+    </script>
+}

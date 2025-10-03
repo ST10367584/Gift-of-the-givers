@@ -1,0 +1,106 @@
+﻿@model Gift_of_the_givers.Models.Volunteer
+
+@{
+    ViewData["Title"] = "Volunteer Registration";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="text-center mb-0"><i class="fas fa-user-plus"></i> Volunteer Registration</h4>
+            </div>
+            <div class="card-body">
+                <partial name="_NotificationPartial" />
+
+                <form asp-action="Register" method="post">
+                    <!-- Personal Information -->
+                    <h5 class="mb-3"><i class="fas fa-user"></i> Personal Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="User.FullName" class="form-label">Full Name</label>
+                                <input asp-for="User.FullName" class="form-control" placeholder="Enter your full name">
+                                <span asp-validation-for="User.FullName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="User.Email" class="form-label">Email Address</label>
+                                <input asp-for="User.Email" type="email" class="form-control" placeholder="Enter your email">
+                                <span asp-validation-for="User.Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Phone" class="form-label">Phone Number</label>
+                                <input asp-for="Phone" class="form-control" placeholder="Enter your phone number">
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Address" class="form-label">Address</label>
+                                <input asp-for="Address" class="form-control" placeholder="Enter your address">
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills and Availability -->
+                    <h5 class="mb-3 mt-4"><i class="fas fa-tools"></i> Skills & Availability</h5>
+                    <div class="mb-3">
+                        <label asp-for="Skills" class="form-label">Skills (comma separated)</label>
+                        <input asp-for="Skills" class="form-control" placeholder="e.g., First Aid, Cooking, Driving, Construction">
+                        <small class="text-muted">List your relevant skills separated by commas</small>
+                        <span asp-validation-for="Skills" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Availability" class="form-label">Availability</label>
+                                <select asp-for="Availability" class="form-select">
+                                    <option value="">Select Availability</option>
+                                    <option value="Full-time">Full-time</option>
+                                    <option value="Part-time">Part-time</option>
+                                    <option value="Weekends">Weekends Only</option>
+                                    <option value="Emergency">Emergency Response Only</option>
+                                </select>
+                                <span asp-validation-for="Availability" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <h5 class="mb-3 mt-4"><i class="fas fa-address-book"></i> Additional Information</h5>
+                    <div class="mb-3">
+                        <label for="EmergencyContact" class="form-label">Emergency Contact</label>
+                        <input type="text" class="form-control" id="EmergencyContact" placeholder="Name and phone of emergency contact">
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree to the terms and conditions and understand the risks involved in volunteer work
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-check"></i> Register as Volunteer
+                        </button>
+                        <a href="/Volunteer" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

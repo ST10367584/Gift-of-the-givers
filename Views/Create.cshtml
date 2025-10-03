@@ -1,0 +1,125 @@
+﻿@model Gift_of_the_givers.Models.Donation
+
+@{
+    ViewData["Title"] = "Make Donation";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="text-center mb-0"><i class="fas fa-donate"></i> Make a Donation</h4>
+            </div>
+            <div class="card-body">
+                <partial name="_NotificationPartial" />
+
+                <form asp-action="Create" method="post">
+                    <!-- Donor Information -->
+                    <h5 class="mb-3"><i class="fas fa-user"></i> Donor Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="DonorName" class="form-label">Full Name *</label>
+                                <input asp-for="DonorName" class="form-control" placeholder="Enter your full name" required>
+                                <span asp-validation-for="DonorName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="DonorEmail" class="form-label">Email Address</label>
+                                <input asp-for="DonorEmail" type="email" class="form-control" placeholder="Enter your email">
+                                <span asp-validation-for="DonorEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DonorPhone" class="form-label">Phone Number</label>
+                        <input asp-for="DonorPhone" class="form-control" placeholder="Enter your phone number">
+                        <span asp-validation-for="DonorPhone" class="text-danger"></span>
+                    </div>
+
+                    <!-- Donation Details -->
+                    <h5 class="mb-3 mt-4"><i class="fas fa-gift"></i> Donation Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="ResourceType" class="form-label">Donation Type *</label>
+                                <select asp-for="ResourceType" class="form-select" id="resourceType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Money">Financial Donation</option>
+                                    <option value="Food">Food Supplies</option>
+                                    <option value="Water">Water</option>
+                                    <option value="Medical">Medical Supplies</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Shelter">Shelter Materials</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <span asp-validation-for="ResourceType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="DisasterID" class="form-label">Specific Disaster (Optional)</label>
+                                <select asp-for="DisasterID" class="form-select" asp-items="ViewBag.Disasters">
+                                    <option value="">General Donation</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Fields -->
+                    <div id="moneyFields" class="donation-fields" style="display: none;">
+                        <div class="mb-3">
+                            <label asp-for="Amount" class="form-label">Donation Amount (R)</label>
+                            <input asp-for="Amount" type="number" step="0.01" class="form-control" placeholder="Enter amount">
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div id="itemFields" class="donation-fields" style="display: none;">
+                        <div class="mb-3">
+                            <label asp-for="Quantity" class="form-label">Quantity</label>
+                            <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity">
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Provide details about your donation"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-hand-holding-heart"></i> Submit Donation
+                        </button>
+                        <a href="/Donation" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('resourceType').addEventListener('change', function() {
+            var resourceType = this.value;
+
+            // Hide all fields first
+            document.querySelectorAll('.donation-fields').forEach(function(field) {
+                field.style.display = 'none';
+            });
+
+            // Show relevant fields
+            if (resourceType === 'Money') {
+                document.getElementById('moneyFields').style.display = 'block';
+            } else if (resourceType !== '') {
+                document.getElementById('itemFields').style.display = 'block';
+            }
+        });
+    </script>
+}
