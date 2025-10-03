@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Gift_of_the_givers.props" />
+</Project>
